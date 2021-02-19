@@ -57,7 +57,7 @@ class NewIncidentNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'nexmo', 'slack'];
+        return ['mail', 'nexmo', 'slack', 'twilio'];
     }
 
     /**
@@ -135,5 +135,19 @@ class NewIncidentNotification extends Notification
                                        'Link' => $this->incident->permalink,
                                    ]));
                     });
+    }
+
+    /**
+     * Get the Twilio / SMS representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return \Illuminate\Notifications\Messages\TwilioMessage
+     */
+    public function toTwilio($notifiable)
+    {
+        return (new TwilioMessage())->content(trans('notifications.incident.new.sms.content', [
+            'name' => $this->incident->name,
+        ]));
     }
 }

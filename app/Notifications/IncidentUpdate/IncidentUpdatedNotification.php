@@ -57,7 +57,7 @@ class IncidentUpdatedNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'nexmo', 'slack'];
+        return ['mail', 'nexmo', 'slack', 'twilio'];
     }
 
     /**
@@ -146,5 +146,21 @@ class IncidentUpdatedNotification extends Notification
                                    ]))
                                    ->footer(trans('cachet.subscriber.unsubscribe', ['link' => cachet_route('subscribe.unsubscribe', $notifiable->verify_code)]));
                     });
+    }
+
+    /**
+     * Get the Twilio / SMS representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return \Illuminate\Notifications\Messages\NexmoMessage
+     */
+    public function toTwilio($notifiable)
+    {
+        $content = trans('notifications.incident.update.sms.content', [
+            'name' => $this->update->incident->name,
+        ]);
+
+        return (new TwilioMessage())->content($content);
     }
 }

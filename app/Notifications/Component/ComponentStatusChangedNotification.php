@@ -152,4 +152,22 @@ class ComponentStatusChangedNotification extends Notification
                                    ->footer(trans('cachet.subscriber.unsubscribe', ['link' => cachet_route('subscribe.unsubscribe', $notifiable->verify_code)]));
                     });
     }
+
+    /**
+     * Get the Twilio / SMS representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return \Illuminate\Notifications\Messages\TwilioMessage
+     */
+    public function toTwilio($notifiable)
+    {
+        $content = trans('notifications.component.status_update.sms.content', [
+            'name'       => $this->component->name,
+            'old_status' => $this->component->human_status,
+            'new_status' => trans("cachet.components.status.{$this->status}"),
+        ]);
+
+        return (new TwilioMessage())->content($content);
+    }
 }

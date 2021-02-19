@@ -127,4 +127,21 @@ class NewScheduleNotification extends Notification implements ShouldQueue
                                    ]));
                     });
     }
+
+    /**
+     * Get the Twilio / SMS representation of the notification.
+     *
+     * @param mixed $notifiable
+     *
+     * @return \Illuminate\Notifications\Messages\TwilioMessage
+     */
+    public function toTwilio($notifiable)
+    {
+        $content = trans('notifications.schedule.new.sms.content', [
+            'name' => $this->schedule->name,
+            'date' => $this->schedule->scheduled_at_formatted,
+        ]);
+
+        return (new TwilioMessage())->content($content);
+    }
 }
